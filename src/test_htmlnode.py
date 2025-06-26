@@ -19,6 +19,19 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode('<div>', 'a', [], { "href": "example.org"})
         node2 = HTMLNode('<div>', 'a', [], {"aria-on-disable": "True"})
         self.assertNotEqual(node.props_to_html(), node2.props_to_html())
+    
+    def test_props_to_html_multiple(self):
+        node = HTMLNode("div", "Hello, world!", None, {"class": "greeting", "id": "p1"})
+        self.assertEqual(node.props_to_html(), ' class="greeting" id="p1"')
+
+    def test_props_to_html_empty(self):
+        node = HTMLNode( "div", "Hello, world!", None, {})
+        self.assertEqual(node.props_to_html(), "")
+    
+    def test_props_to_html_none(self):
+        node = HTMLNode("div", "Hello, world!", None, None,)
+        with self.assertRaises(TypeError):
+            node.props_to_html()
 
 if __name__ == "__main__":
     unittest.main()

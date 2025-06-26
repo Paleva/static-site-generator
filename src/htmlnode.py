@@ -13,7 +13,6 @@ class HTMLNode():
         final = ''
         for val in self.props:
             final += f' {val}="{self.props[val]}"'
-        print(final)
         return final
 
 
