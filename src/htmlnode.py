@@ -10,7 +10,9 @@ class HTMLNode():
         raise NotImplementedError("Subclasses should implement this method")
     
     def props_to_html(self):
-        final = ''
+        if self.props is None:
+            return ""
+        final = ""
         for val in self.props:
             final += f' {val}="{self.props[val]}"'
         return final

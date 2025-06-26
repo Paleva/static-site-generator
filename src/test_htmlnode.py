@@ -30,8 +30,8 @@ class TestHTMLNode(unittest.TestCase):
     
     def test_props_to_html_none(self):
         node = HTMLNode("div", "Hello, world!", None, None,)
-        with self.assertRaises(TypeError):
-            node.props_to_html()
+        self.assertEqual(node.props_to_html(), "")
+            
 
 if __name__ == "__main__":
     unittest.main()
