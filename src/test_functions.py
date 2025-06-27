@@ -1,6 +1,6 @@
 import unittest
 
-from functions import text_node_to_html_node, split_nodes_delimiter
+from functions import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 from textnode import TextNode, TextType
 
 class TestFunctions(unittest.TestCase):
@@ -96,6 +96,62 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(new_nodes[1].text_type, TextType.CODE)
         self.assertEqual(new_nodes[2].text, "Bold text")
         self.assertEqual(new_nodes[2].text_type, TextType.BOLD)
+    
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_images_single(self):
+        text = "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        expected = [("image", "https://i.imgur.com/zjjcJKZ.png")]
+        self.assertListEqual(extract_markdown_images(text), expected)
+    
+    def test_extract_markdown_images_multiple(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        expected = [
+            ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+            ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")
+        ]
+        self.assertListEqual(extract_markdown_images(text), expected)
+    
+    def test_extract_markdown_images_no_images(self):
+        text = "This is text with no images"
+        self.assertListEqual(extract_markdown_images(text), [])
+    
+    def test_extract_markdown_images_empty_string(self):
+        self.assertListEqual(extract_markdown_images(""), [])
+    
+    def test_extract_markdown_images_with_special_chars(self):
+        text = "![image with spaces](https://example.com/image%20with%20spaces.jpg)"
+        expected = [("image with spaces", "https://example.com/image%20with%20spaces.jpg")]
+        self.assertListEqual(extract_markdown_images(text), expected)
+
+    def test_extract_markdown_links_single(self):
+        text = "This is text with a [link](https://example.com)"
+        expected = [("link", "https://example.com")]
+        self.assertListEqual(extract_markdown_links(text), expected)
+    
+    def test_extract_markdown_links_multiple(self):
+        text = "This is text with a [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        expected = [
+            ("to boot dev", "https://www.boot.dev"),
+            ("to youtube", "https://www.youtube.com/@bootdotdev")
+        ]
+        self.assertListEqual(extract_markdown_links(text), expected)
+    
+    def test_extract_markdown_links_no_links(self):
+        text = "This is text with no links"
+        self.assertListEqual(extract_markdown_links(text), [])
+    
+    def test_extract_markdown_links_empty_string(self):
+        self.assertListEqual(extract_markdown_links(""), [])
+    
+    def test_extract_markdown_links_with_special_chars(self):
+        text = "[link with spaces](https://example.com/page%20with%20spaces)"
+        expected = [("link with spaces", "https://example.com/page%20with%20spaces")]
+        self.assertListEqual(extract_markdown_links(text), expected)
 
 if __name__ == "__main__":
     unittest.main()
