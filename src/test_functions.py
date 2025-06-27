@@ -1,6 +1,6 @@
 import unittest
 
-from functions import text_node_to_html_node
+from functions import text_node_to_html_node, split_nodes_delimiter
 from textnode import TextNode, TextType
 
 class TestFunctions(unittest.TestCase):
@@ -45,6 +45,57 @@ class TestFunctions(unittest.TestCase):
         text_node = TextNode("Invalid", "INVALID_TYPE")
         with self.assertRaises(ValueError):
             text_node_to_html_node(text_node)
+    
+    def test_split_nodes_delimiter_basic(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(len(new_nodes), 3)
+        self.assertEqual(new_nodes[0].text, "This is text with a ")
+        self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
+        self.assertEqual(new_nodes[1].text, "code block")
+        self.assertEqual(new_nodes[1].text_type, TextType.CODE)
+        self.assertEqual(new_nodes[2].text, " word")
+        self.assertEqual(new_nodes[2].text_type, TextType.TEXT)
+
+    def test_split_nodes_delimiter_empty(self):
+        new_nodes = split_nodes_delimiter([], "`", TextType.CODE)
+        self.assertEqual(len(new_nodes), 0)
+
+    def test_split_nodes_delimiter_no_delims(self):
+        node = TextNode("Just plain text", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(len(new_nodes), 1)
+        self.assertEqual(new_nodes[0].text, "Just plain text")
+        self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
+
+    def test_split_nodes_delimiter_multiple(self):
+        node = TextNode("Over `code` then `more code`", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(len(new_nodes), 4)
+        self.assertEqual(new_nodes[0].text, "Over ")
+        self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
+        self.assertEqual(new_nodes[1].text, "code")
+        self.assertEqual(new_nodes[1].text_type, TextType.CODE)
+        self.assertEqual(new_nodes[2].text, " then ")
+        self.assertEqual(new_nodes[3].text, "more code")
+        self.assertEqual(new_nodes[3].text_type, TextType.CODE)
+
+    def test_split_nodes_delimiter_unclosed(self):
+        node = TextNode("Unclosed `delimiter", TextType.TEXT)
+        with self.assertRaises(Exception):
+            split_nodes_delimiter([node], "`", TextType.CODE)
+
+    def test_split_nodes_delimiter_preserve_others(self):
+        node1 = TextNode("Text with `code`", TextType.TEXT)
+        node2 = TextNode("Bold text", TextType.BOLD)
+        new_nodes = split_nodes_delimiter([node1, node2], "`", TextType.CODE)
+        self.assertEqual(len(new_nodes), 3)
+        self.assertEqual(new_nodes[0].text, "Text with ")
+        self.assertEqual(new_nodes[0].text_type, TextType.TEXT)
+        self.assertEqual(new_nodes[1].text, "code")
+        self.assertEqual(new_nodes[1].text_type, TextType.CODE)
+        self.assertEqual(new_nodes[2].text, "Bold text")
+        self.assertEqual(new_nodes[2].text_type, TextType.BOLD)
 
 if __name__ == "__main__":
     unittest.main()

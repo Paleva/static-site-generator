@@ -18,3 +18,35 @@ def text_node_to_html_node(text_node: TextNode):
             return LeafNode('a', text_node.text, {"href":text_node.url})
         case TextType.IMAGE:
             return LeafNode('img', "", {"src": text_node.url, "alt": text_node.text})
+        
+
+def split_nodes_delimiter(old_nodes: list[TextNode], delim: str, text_type: TextType):
+    new_nodes = []
+
+    if len(old_nodes) == 0:
+        return old_nodes
+
+    for node in old_nodes:
+        
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+
+        if delim not in node.text:
+            new_nodes.append(node)
+            continue
+
+        if node.text.count(delim) % 2 != 0:
+            raise Exception(f"Markdown syntax error. Unclosed {text_type} element")
+
+        parts = node.text.split(delim)
+
+        for idx, part in enumerate(parts):
+            if part == '':
+                continue
+            elif idx % 2 == 0:
+                new_nodes.append(TextNode(part, TextType.TEXT))
+            else:
+                new_nodes.append(TextNode(part, text_type))
+
+    return new_nodes
