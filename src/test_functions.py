@@ -278,7 +278,6 @@ class TestFunctions(unittest.TestCase):
             TextNode(" [link](https://boot.dev) end", TextType.TEXT),
         ]
         result = split_nodes_link(nodes)
-        print(result)
         self.assertListEqual(
             [
                 TextNode("Start ", TextType.TEXT),

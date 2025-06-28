@@ -62,9 +62,14 @@ def extract_markdown_links(text: str):
 
 def split_nodes_image(old_nodes: list[TextNode]):
     nodes = []
+    temp = None
     for node in old_nodes:
         if len(node.text) == 0:
             continue
+        if node.text_type is not TextType.TEXT:
+            nodes.append(node)
+            continue
+
         result = extract_markdown_images(node.text)
         if len(result) == 0: # no links found so just append the current node
             nodes.append(node)
@@ -72,21 +77,20 @@ def split_nodes_image(old_nodes: list[TextNode]):
         temp = node.text
         for link in result:
             temp = temp.split(f"![{link[0]}]({link[1]})", 1)
-            if len(temp[0]) != 0:
+            if temp[0] != ' ' and len(temp[0]) != 0:
                 nodes.append(TextNode(temp[0], node.text_type))
-                nodes.append(TextNode(link[0], TextType.IMAGE, link[1]))
-                temp = temp[1]
+            nodes.append(TextNode(link[0], TextType.IMAGE, link[1]))
+            temp = temp[1]
         
-        if len(temp) == 0:
-            return nodes
-        else:
-            nodes.append(TextNode(temp, TextType.TEXT))
-            # print(nodes)
-            return nodes
-    # return nodes
+    if temp is None or len(temp) == 0:
+        return nodes
+    else:
+        nodes.append(TextNode(temp, TextType.TEXT))
+        return nodes
 
 def split_nodes_link(old_nodes: list[TextNode]):
     nodes = []
+    temp = None
     for node in old_nodes:
         
         if len(node.text) == 0:
@@ -102,16 +106,12 @@ def split_nodes_link(old_nodes: list[TextNode]):
         temp = node.text
         for link in result:
             temp = temp.split(f"[{link[0]}]({link[1]})", 1)
-            if len(temp[0]) != 0 or temp[0] != ' ':
+            if temp[0] != ' ' and len(temp[0]) != 0:
                 nodes.append(TextNode(temp[0], TextType.TEXT))
-                nodes.append(TextNode(link[0], TextType.LINK, link[1]))
-                temp = temp[1]
-            else:
-                nodes.append(TextNode(temp[1], node.text_type))
-        if len(temp) == 0:
-            return nodes
-        else:
-            nodes.append(TextNode(temp, TextType.TEXT))
-            # print(nodes)
-            return nodes
-    return nodes
+            nodes.append(TextNode(link[0], TextType.LINK, link[1]))
+            temp = temp[1]
+    if temp is None or len(temp) == 0 :
+        return nodes
+    else:
+        nodes.append(TextNode(temp, TextType.TEXT))
+        return nodes
