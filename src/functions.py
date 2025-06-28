@@ -110,6 +110,7 @@ def split_nodes_link(old_nodes: list[TextNode]):
                 nodes.append(TextNode(temp[0], TextType.TEXT))
             nodes.append(TextNode(link[0], TextType.LINK, link[1]))
             temp = temp[1]
+    
     if temp is None or len(temp) == 0 :
         return nodes
     else:

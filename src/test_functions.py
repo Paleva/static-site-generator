@@ -287,5 +287,22 @@ class TestFunctions(unittest.TestCase):
             ],
             result
         )
+
+    def test_split_boots_case(self):
+        old_nodes = [
+            TextNode("This is an image: ![one](url1)", TextType.TEXT),
+            TextNode("This is another image: ![two](url2)", TextType.TEXT)
+        ]
+        new_nodes = split_nodes_image(old_nodes)
+        print(new_nodes)
+        self.assertListEqual(
+            [
+                TextNode("This is an image: ", TextType.TEXT),
+                TextNode("one", TextType.IMAGE, "url1"),
+                TextNode("This is another image: ", TextType.TEXT),
+                TextNode("two", TextType.IMAGE, 'url2')
+            ],
+            new_nodes
+        )
 if __name__ == "__main__":
     unittest.main()
