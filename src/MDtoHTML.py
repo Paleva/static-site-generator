@@ -1,3 +1,5 @@
+import re
+
 from htmlnode import HTMLNode
 from textnode import TextNode
 from blocktype import BlockType
@@ -26,15 +28,15 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             children_nodes.append(HTMLNode('blockquote',None , text_to_children(block)))
         elif block_type == BlockType.ORDERED_LIST:
             list_nodes = []
-            li = process_list_items(children)
+            li = process_list_items(block)
             for item in li:
                 list_nodes.append(HTMLNode('li', None, text_to_children(item)))
             children_nodes.append(HTMLNode('ol', None, list_nodes))
         elif block_type == BlockType.UNORDERED_LIST:
-            children = text_to_children(block)
             list_items = []
-            for child in children:
-                list_items.append(HTMLNode('li', text_to_children(child)))
+            li = process_list_items(block)
+            for item in li:
+                list_items.append(HTMLNode('li', None, text_to_children(item)))
             children_nodes.append(HTMLNode('ul', None, list_items))
         elif block_type == BlockType.CODE:
             node = TextNode(block, TextType.CODE)
@@ -42,7 +44,7 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             children_nodes.append(HTMLNode('pre', None, [node]))
         print(children_nodes)
 
-    return None
+    return HTMLNode('div', None, children_nodes)
 
 def text_to_children(text: str) -> list:
     nodes = text_to_textnodes(text)
@@ -54,5 +56,13 @@ def text_to_children(text: str) -> list:
 
 
 def process_list_items(list_items: str) -> list[str]:
-    items = list_items.split('\n')
-    return items
+    block_type = block_to_block_type(list_items)
+    lines = list_items.split('\n')
+    processed_lines = []
+    if block_type == BlockType.UNORDERED_LIST:
+        for line in lines:
+            processed_lines.append(re.sub(r'^\s*(\.\s*|\*\s*|-\s*)', '', line))
+    elif block_type == BlockType.ORDERED_LIST:
+        for line in lines:
+            processed_lines.append(re.sub(r'^\d+\.\s*', '', line))
+    return processed_lines
