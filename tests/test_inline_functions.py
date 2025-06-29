@@ -1,7 +1,7 @@
 import unittest
 
-from src.inline_functions import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
-from src.textnode import TextNode, TextType
+from inline_functions import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
+from textnode import TextNode, TextType
 
 class TestFunctions(unittest.TestCase):
     def test_text(self):

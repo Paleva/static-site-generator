@@ -1,5 +1,5 @@
 import unittest
-from src.MDtoHTML import markdown_to_html_node
+from MDtoHTML import markdown_to_html_node
 
 class TestMDtoHTML(unittest.TestCase):
     def test_paragraphs(self):
