@@ -1,5 +1,6 @@
 import unittest
-from block_functions import markdown_to_blocks
+from block_functions import markdown_to_blocks, block_to_block_type
+from blocktype import BlockType
 
 class TestBlockFunctions(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -145,8 +146,105 @@ Final paragraph
             ],
         )
 
+    def test_block_to_block_type_paragraph(self):
+        block = "This is a normal paragraph with text."
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
+    def test_block_to_block_type_heading(self):
+        test_cases = {
+            "# Heading 1": BlockType.HEADING,
+            "## Heading 2": BlockType.HEADING,
+            "### Heading 3": BlockType.HEADING,
+            "#### Heading 4": BlockType.HEADING,
+            "##### Heading 5": BlockType.HEADING,
+            "###### Heading 6": BlockType.HEADING,
+        }
+        for block, expected in test_cases.items():
+            self.assertEqual(block_to_block_type(block), expected)
 
+    def test_block_to_block_type_code(self):
+        block = """```
+def hello():
+    print('Hello, world!')
+```"""
+        self.assertEqual(block_to_block_type(block), BlockType.CODE)
 
+    def test_block_to_block_type_quote(self):
+        test_cases = [
+            "> This is a quote",
+            "> Multi-line\n> quote block",
+            "> Quote with\n> multiple lines\n> in it"
+        ]
+        for block in test_cases:
+            self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+
+    def test_block_to_block_type_unordered_list(self):
+        test_cases = [
+            "- Single item",
+            "- Item 1\n- Item 2",
+            "- Item 1\n- Item 2\n- Item 3"
+        ]
+        for block in test_cases:
+            self.assertEqual(block_to_block_type(block), BlockType.UNORDERED_LIST)
+
+    def test_block_to_block_type_ordered_list(self):
+        test_cases = [
+            "1. First item",
+            "1. First item\n2. Second item",
+            "1. First\n2. Second\n3. Third"
+        ]
+        for block in test_cases:
+            self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
+
+    def test_block_to_block_type_invalid_heading(self):
+        test_cases = [
+            "#Missing space",
+            "##Not a heading",
+            "###### More than 6 #s #######"
+        ]
+        for block in test_cases:
+            self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_block_to_block_type_invalid_lists(self):
+        test_cases = [
+            "-Missing space after dash",
+            "1.Missing space after dot",
+            "2. Wrong starting number\n3. Should start with 1",
+            "1. Wrong order\n3. Skipped number"
+        ]
+        for block in test_cases:
+            self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_block_to_block_type_invalid_quote(self):
+        test_cases = [
+            ">Missing space",
+            "Not a quote\n> Mixed with quote",
+            "Missing arrow in second line\nThis is not quote format"
+        ]
+        for block in test_cases:
+            self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_block_to_block_type_invalid_code(self):
+        test_cases = [
+            "``\nNot enough backticks\n``",
+            "```\nUnclosed code block",
+            "`Single backticks`"
+        ]
+        for block in test_cases:
+            self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+    def test_block_to_block_types(self):
+        block = "# heading"
+        self.assertEqual(block_to_block_type(block), BlockType.HEADING)
+        block = "```\ncode\n```"
+        self.assertEqual(block_to_block_type(block), BlockType.CODE)
+        block = "> quote\n> more quote"
+        self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+        block = "- list\n- items"
+        self.assertEqual(block_to_block_type(block), BlockType.UNORDERED_LIST)
+        block = "1. list\n2. items"
+        self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
+        block = "paragraph"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 if __name__ == "__main__":
     unittest.main()
