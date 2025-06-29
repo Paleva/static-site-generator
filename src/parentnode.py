@@ -2,7 +2,7 @@ from htmlnode import HTMLNode
 
 class ParentNode(HTMLNode):
     def __init__(self, tag: str, children: list, props: dict = None):
-        super().__init__(tag, children=children, props=props)
+        super().__init__(tag, None, children, props)
 
     def to_html(self):
         if self.tag is None:

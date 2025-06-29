@@ -1,34 +1,34 @@
 from blocktype import BlockType
 
 
-def markdown_to_blocks(markdown: str):
-    strings = markdown.split('\n')
-    paragraphs = []
-    temp = ''
-    for idx in range(len(strings)):
-        if len(strings[idx]) == 0 and idx == 0:
-            continue
-        if len(strings[idx]) == 0:
-            paragraphs.append(temp.strip())
-            temp = ''
-        else:
-            if strings[idx+1] == '':
-                temp += strings[idx]
-            else:
-                temp += strings[idx] + '\n'
-    
-    
-    return [paragraph for paragraph in paragraphs if len(paragraph)!=0]
-
-# def markdown_to_blocks(markdown):
-#     blocks = markdown.split("\n\n")
-#     filtered_blocks = []
-#     for block in blocks:
-#         if block == "":
+# def markdown_to_blocks(markdown: str):
+#     strings = markdown.split('\n')
+#     paragraphs = []
+#     temp = ''
+#     for idx in range(len(strings)-1):
+#         if len(strings[idx]) == 0 and idx == 0:
 #             continue
-#         block = block.strip()
-#         filtered_blocks.append(block)
-#     return filtered_blocks
+#         if len(strings[idx]) == 0:
+#             paragraphs.append(temp.strip())
+#             temp = ''
+#         else:
+#             if strings[idx+1] == '':
+#                 temp += strings[idx]
+#             else:
+#                 temp += strings[idx] + '\n'
+    
+    
+#     return [paragraph for paragraph in paragraphs if len(paragraph)!=0]
+
+def markdown_to_blocks(markdown):
+    blocks = markdown.split("\n\n")
+    filtered_blocks = []
+    for block in blocks:
+        if block == "":
+            continue
+        block = block.strip()
+        filtered_blocks.append(block)
+    return filtered_blocks
 
 
 def block_to_block_type(markdown: str) -> BlockType:
