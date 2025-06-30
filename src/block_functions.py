@@ -43,6 +43,7 @@ def block_to_block_type(markdown: str) -> BlockType:
     if markdown.startswith("> "):
         lines = markdown.split('\n')
         for line in lines:
+            line = line.strip()
             if not line.startswith("> "):
                 return BlockType.PARAGRAPH
         return BlockType.QUOTE
@@ -50,6 +51,7 @@ def block_to_block_type(markdown: str) -> BlockType:
     if markdown.startswith("- "):
         lines = markdown.split('\n')
         for line in lines:
+            line = line.strip()
             if not line.startswith("- "):
                 return BlockType.PARAGRAPH
         return BlockType.UNORDERED_LIST
@@ -57,6 +59,7 @@ def block_to_block_type(markdown: str) -> BlockType:
     if markdown.startswith("1. "):
         list_items = markdown.split('\n')
         for idx, item in enumerate(list_items):
+            item = item.strip()
             if not item.startswith(f"{idx+1}. "):
                 return BlockType.PARAGRAPH
         return BlockType.ORDERED_LIST

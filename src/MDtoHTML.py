@@ -24,17 +24,18 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
         if block_type == BlockType.PARAGRAPH:
             children_nodes.append(process_paragraph(process_block(block)))
         elif block_type == BlockType.HEADING:
-            children_nodes.append(process_heading(process_block(block)))
+            result = process_heading(block)
+            if isinstance(result, list):
+                children_nodes.extend(result)
+            else:
+                children_nodes.append(result)
         elif block_type == BlockType.QUOTE:
-            children_nodes.append(process_quote(process_block(block)))
+            children_nodes.append(process_quote(block))
         elif block_type == BlockType.ORDERED_LIST:
-            children_nodes.append(process_ol(process_block(block)))
+            children_nodes.append(process_ol(block))
         elif block_type == BlockType.UNORDERED_LIST:
-            children_nodes.append(process_ul(process_block(block)))
+            children_nodes.append(process_ul(block))
         elif block_type == BlockType.CODE:
-            block = re.sub(r'^```[^\n]*\n?', '', block)   # remove opening ```
-            block = re.sub(r'\n?```$', '', block)         # remove closing ```
-            block = textwrap.dedent(block) # dedent the block
             children_nodes.append(process_code(block))
     return ParentNode('div', children_nodes)
 
@@ -44,6 +45,9 @@ def process_block(block: str) -> str:
     return processed_block
 
 def process_code(block: str) -> HTMLNode:
+    block = re.sub(r'^```[^\n]*\n?', '', block)   # remove opening ```
+    block = re.sub(r'\n?```$', '', block)         # remove closing ```
+    block = textwrap.dedent(block) # dedent the block
     block = block.rstrip('\n') + '\n'
     node = TextNode(block, TextType.CODE)
     node = text_node_to_html_node(node)
@@ -67,11 +71,35 @@ def process_paragraph(block: str) -> HTMLNode:
     return ParentNode('p', text_to_children(block))
 
 def process_quote(block: str) -> HTMLNode:
-    return ParentNode('blockquote', text_to_children(block))
+    split = block.split('\n')
+    if len(split) == 1:
+        return ParentNode("blockquote", text_to_children(block.replace("> ", '').strip()))
+    else:
+        joined = ""
+        for line in split:
+            joined += f"{line.replace("> ", "").strip()} "
+        
+        return ParentNode("blockquote", text_to_children(joined.rstrip()))
+
 
 def process_heading(block: str) -> HTMLNode:
-    heading_level = block.count('#')
-    return ParentNode(f'h{heading_level}', text_to_children(block))
+    lines = [line.strip() for line in block.splitlines() if line.strip()]
+    
+    # single heading
+    if len(lines) == 1:
+        heading_level = lines[0].count('#')
+        heading_text = lines[0].lstrip('#').strip()
+        return ParentNode(f'h{heading_level}', text_to_children(heading_text))
+    
+    # multiple headings
+    heading_node = []
+    for line in lines:
+        if line.startswith('#'):
+            heading_level = line.count('#')
+            heading_text = line.lstrip('#').strip()
+            heading_node.append(ParentNode(f'h{heading_level}', text_to_children(heading_text)))
+    
+    return heading_node[0] if len(heading_node) == 1 else heading_node
 
 def text_to_children(text: str) -> list:
     nodes = text_to_textnodes(text)
@@ -90,5 +118,5 @@ def process_list_items(list_items: str) -> list[str]:
             processed_lines.append(re.sub(r'^\s*(\.\s*|\*\s*|-\s*)', '', line))
     elif block_type == BlockType.ORDERED_LIST:
         for line in lines:
-            processed_lines.append(re.sub(r'^\d+\.\s*', '', line))
+            processed_lines.append(re.sub(r'^\s*\d+\.\s*', '', line))
     return processed_lines
