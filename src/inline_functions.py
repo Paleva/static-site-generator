@@ -7,7 +7,7 @@ def text_node_to_html_node(text_node: TextNode):
         raise ValueError(f"Unsupported text type: {text_node.text_type}")
 
     match text_node.text_type:
-        case  TextType.TEXT:
+        case TextType.TEXT:
             return LeafNode(None, text_node.text)
         case TextType.BOLD:
             return LeafNode('b', text_node.text)
