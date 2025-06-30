@@ -32,9 +32,9 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
         elif block_type == BlockType.UNORDERED_LIST:
             children_nodes.append(process_ul(process_block(block)))
         elif block_type == BlockType.CODE:
-            block = re.sub(r'^```(\w+)?\n?', '', block)   # remove opening ```
+            block = re.sub(r'^```[^\n]*\n?', '', block)   # remove opening ```
             block = re.sub(r'\n?```$', '', block)         # remove closing ```
-            block = textwrap.dedent(block)
+            block = textwrap.dedent(block) # dedent the block
             children_nodes.append(process_code(block))
     return ParentNode('div', children_nodes)
 
