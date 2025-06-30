@@ -109,7 +109,7 @@ class TestMDtoHTML(unittest.TestCase):
     """
         node = markdown_to_html_node(md)
         html = node.to_html()
-        print(html)
+        # print(html)
         self.assertEqual(
             html,
             "<div><h1>Main Title</h1><p>This is a paragraph with <b>bold</b> and <i>italic</i> text.</p><blockquote>A quote with <code>code</code></blockquote><ul><li>List item 1</li><li>List item 2</li></ul><pre><code>Code block\nwith multiple\nlines\n</code></pre></div>"
