@@ -3,6 +3,15 @@ from leafnode import LeafNode
 import re
 
 def text_node_to_html_node(text_node: TextNode):
+    """
+    Convert a TextNode instance into a corresponding HTML LeafNode based on its text type.
+    
+    Raises:
+        ValueError: If the text type of the node is not supported.
+    
+    Returns:
+        LeafNode: The HTML representation of the given TextNode, with appropriate tag and attributes for bold, italic, code, link, or image types.
+    """
     if text_node.text_type not in TextType:
         raise ValueError(f"Unsupported text type: {text_node.text_type}")
 

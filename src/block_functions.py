@@ -21,6 +21,15 @@ from blocktype import BlockType
 #     return [paragraph for paragraph in paragraphs if len(paragraph)!=0]
 
 def markdown_to_blocks(markdown):
+    """
+    Split a markdown string into a list of non-empty, trimmed blocks separated by double newlines.
+    
+    Parameters:
+        markdown (str): The markdown text to be split into blocks.
+    
+    Returns:
+        list[str]: A list of markdown blocks, each stripped of leading and trailing whitespace.
+    """
     blocks = markdown.split("\n\n")
     filtered_blocks = []
     for block in blocks:
@@ -32,6 +41,12 @@ def markdown_to_blocks(markdown):
 
 
 def block_to_block_type(markdown: str) -> BlockType:
+    """
+    Determine the type of a markdown block and return its corresponding BlockType.
+    
+    Returns:
+        BlockType: The type of the markdown block, such as HEADING, CODE, QUOTE, UNORDERED_LIST, ORDERED_LIST, or PARAGRAPH.
+    """
     if markdown.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         if markdown.count('#') > 6:
             return BlockType.PARAGRAPH
