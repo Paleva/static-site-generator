@@ -38,10 +38,10 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             children_nodes.append(process_code(block))
     return ParentNode('div', children_nodes)
 
-def process_block(block: str) -> HTMLNode:
+def process_block(block: str) -> str:
     lines = [line.strip() for line in block.strip().splitlines() if line.strip()]
-    block = " ".join(lines)
-    return block
+    processed_block = " ".join(lines)
+    return processed_block
 
 def process_code(block: str) -> HTMLNode:
     block = block.rstrip('\n') + '\n'
