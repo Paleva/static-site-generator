@@ -1,6 +1,10 @@
 
 def extract_title(markdown: str):
-    pass    
+    blocks = markdown.split('\n')
+    if blocks[0].startswith('#') and blocks[0].count("#", 0, 6) == 1:
+        return blocks[0].strip("#").strip()
+    else:
+        raise ValueError("Wrong header level for a title")
 
 
 def generate_page(src_path: str, template_path: str, dst_path: str):
