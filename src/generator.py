@@ -1,6 +1,6 @@
 
 def extract_title(markdown: str):
-    pass
+    pass    
 
 
 def generate_page(src_path: str, template_path: str, dst_path: str):
