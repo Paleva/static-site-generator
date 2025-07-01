@@ -5,14 +5,14 @@ from generator import generate_pages
 
 CONTENT_DIR = "./content"
 STATIC_DIR = "./static"
-PUBLIC_DIR = "./public"
+PUBLIC_DIR = "./docs"
 TEMPLATE_PATH = "./template.html"
 
 
 def main():
     
     basepath = sys.argv[1] if len(sys.argv) >= 2 else "/"
-            
+
     try:
         delete_files(PUBLIC_DIR)
         copy_files(STATIC_DIR, PUBLIC_DIR)
