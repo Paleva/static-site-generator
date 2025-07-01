@@ -1,12 +1,11 @@
 from textnode import TextNode
 from FSoperations import copy_files, delete_files
-
+from generator import generate_page
 
 def main():
-    # node = TextNode("Hello, World!", "plain", None)
-    # print(node)
     delete_files('public')
     copy_files('static', 'public')
+    generate_page("./content/index.md", "template.html", "public")
 
 
 if __name__ == "__main__":
