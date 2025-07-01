@@ -24,7 +24,7 @@ def copy_files(src: str, dst: str):
             print(f"CREATED DIRECTORY: {dst_full_path}/{item}")
         elif os.path.isfile(file_path):
             shutil.copy(f"{file_path}", f"{dst_full_path}")
-            print(f"COPIED FILE: {file_path} TO {src_full_path}")
+            print(f"COPIED FILE: {file_path} -> {src_full_path}")
 
 def delete_files(dir: str = None):
     if dir == None:
