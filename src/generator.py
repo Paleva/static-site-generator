@@ -9,7 +9,7 @@ def extract_title(markdown: str):
         raise ValueError("Wrong header level for a title")
 
 
-def generate_pages(src_path: str, template_path: str, dst_path: str):
+def generate_pages(src_path: str, template_path: str, dst_path: str, basepath: str):
     print(f"Generating page from {src_path} to {dst_path} using {template_path}")
     
 
@@ -17,9 +17,9 @@ def generate_pages(src_path: str, template_path: str, dst_path: str):
     for item in dir_items:
         if os.path.isdir(os.path.join(src_path, item)):
             os.mkdir(os.path.join(dst_path, item))
-            generate_pages(os.path.join(src_path, item), template_path, os.path.join(dst_path, item))
+            generate_pages(os.path.join(src_path, item), template_path, os.path.join(dst_path, item), basepath)
         else:
-            generate_page(src_path, template_path, dst_path)
+            generate_page(src_path, template_path, dst_path, basepath)
     # src_path = os.path.join(src_path, "index.md") 
     
     # with open(src_path, "r") as md_file:
@@ -42,7 +42,7 @@ def generate_pages(src_path: str, template_path: str, dst_path: str):
     #     raise
 
 
-def generate_page(src_path: str, template_path: str, dst_path: str):
+def generate_page(src_path: str, template_path: str, dst_path: str, basepath: str):
     src_path = os.path.join(src_path, "index.md") 
     
     with open(src_path, "r") as md_file:
@@ -55,6 +55,8 @@ def generate_page(src_path: str, template_path: str, dst_path: str):
     title = extract_title(md_str)
     template_str = template_str.replace("{{ Title }}", title)
     template_str = template_str.replace("{{ Content }}", html_str)
+    template_str = template_str.replace('href="/', f'href="{basepath}')
+    template_str = template_str.replace('src="/', f'src="{basepath}')
     
     try:
         with open(f"{dst_path}/index.html", "w") as html_file:
