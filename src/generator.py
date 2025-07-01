@@ -1,3 +1,4 @@
+import os.path
 from MDtoHTML import markdown_to_html_node
 
 def extract_title(markdown: str):
@@ -8,8 +9,41 @@ def extract_title(markdown: str):
         raise ValueError("Wrong header level for a title")
 
 
-def generate_page(src_path: str, template_path: str, dst_path: str):
+def generate_pages(src_path: str, template_path: str, dst_path: str):
     print(f"Generating page from {src_path} to {dst_path} using {template_path}")
+    
+
+    dir_items = os.listdir(src_path)
+    for item in dir_items:
+        if os.path.isdir(os.path.join(src_path, item)):
+            os.mkdir(os.path.join(dst_path, item))
+            generate_pages(os.path.join(src_path, item), template_path, os.path.join(dst_path, item))
+        else:
+            generate_page(src_path, template_path, dst_path)
+    # src_path = os.path.join(src_path, "index.md") 
+    
+    # with open(src_path, "r") as md_file:
+    #     md_str = md_file.read()
+    # with open(template_path, "r") as template_file:
+    #     template_str = template_file.read()
+
+    # html_node = markdown_to_html_node(md_str)
+    # html_str = html_node.to_html()
+    # title = extract_title(md_str)
+    # template_str = template_str.replace("{{ Title }}", title)
+    # template_str = template_str.replace("{{ Content }}", html_str)
+    
+    # try:
+    #     with open(f"{dst_path}/index.html", "w") as html_file:
+    #         html_file.write(template_str)
+    #     return 
+    # except (OSError, IOError) as e:
+    #     print(f"Error writting HTML file {e}")
+    #     raise
+
+
+def generate_page(src_path: str, template_path: str, dst_path: str):
+    src_path = os.path.join(src_path, "index.md") 
     
     with open(src_path, "r") as md_file:
         md_str = md_file.read()
@@ -21,9 +55,11 @@ def generate_page(src_path: str, template_path: str, dst_path: str):
     title = extract_title(md_str)
     template_str = template_str.replace("{{ Title }}", title)
     template_str = template_str.replace("{{ Content }}", html_str)
+    
     try:
         with open(f"{dst_path}/index.html", "w") as html_file:
             html_file.write(template_str)
+        return 
     except (OSError, IOError) as e:
         print(f"Error writting HTML file {e}")
         raise
