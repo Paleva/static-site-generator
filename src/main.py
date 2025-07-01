@@ -10,6 +10,10 @@ def copy_files(src: str, dst: str):
     cwd = Path.cwd()
     src_full_path = os.path.join(cwd, src)
     dst_full_path = os.path.join(cwd, dst)
+    
+    if not os.path.exists(dst_full_path):
+        os.mkdir(dst_full_path)
+    
     dir_items = os.listdir(src_full_path)
     for item in dir_items:
         file_path = os.path.join(src_full_path, item)
@@ -25,9 +29,12 @@ def copy_files(src: str, dst: str):
 def delete_files(dir: str = None):
     if dir == None:
         return None
-
     cwd = Path.cwd()
     full_path = os.path.join(cwd, dir)
+
+    if not os.path.exists(full_path):
+        return None
+
     dir_items = os.listdir(full_path)
     for item in dir_items:
         file_path = os.path.join(full_path, item)
