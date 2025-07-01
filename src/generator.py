@@ -11,10 +11,10 @@ def extract_title(markdown: str):
 def generate_page(src_path: str, template_path: str, dst_path: str):
     print(f"Generating page from {src_path} to {dst_path} using {template_path}")
     
-    md_file = open(src_path, "r")
-    template_file = open(template_path, "r")
-    md_str = md_file.read()
-    template_str = template_file.read()
+    with open(src_path, "r") as md_file:
+        md_str = md_file.read()
+    with  open(template_path, "r") as template_file:
+        template_str = template_file.read()
     
     md_file.close()
     template_file.close()
@@ -25,5 +25,5 @@ def generate_page(src_path: str, template_path: str, dst_path: str):
     template_str = template_str.replace("{{ Title }}", title)
     template_str = template_str.replace("{{ Content }}", html_str)
 
-    html_file = open(f"{dst_path}/index.html", "w")
-    html_file.write(template_str)
+    with open(f"{dst_path}/index.html", "w") as html_file:
+        html_file.write(template_str)

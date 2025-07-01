@@ -4,8 +4,12 @@ from pathlib import Path
 
 
 def copy_files(src: str, dst: str):
+    
     if dir == None:
         return None
+    if src == None:
+        return None
+    
     cwd = Path.cwd()
     src_full_path = os.path.join(cwd, src)
     dst_full_path = os.path.join(cwd, dst)
