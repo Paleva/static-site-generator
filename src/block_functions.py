@@ -44,7 +44,7 @@ def block_to_block_type(markdown: str) -> BlockType:
         lines = markdown.split('\n')
         for line in lines:
             line = line.strip()
-            if not line.startswith("> "):
+            if not line.startswith(">"):
                 return BlockType.PARAGRAPH
         return BlockType.QUOTE
     

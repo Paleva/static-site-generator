@@ -77,8 +77,10 @@ def process_quote(block: str) -> HTMLNode:
     else:
         joined = ""
         for line in split:
-            joined += f"{line.replace('> ', '').strip()} "
-        
+            line = line.strip()
+            if len(line) == 1:
+                continue
+            joined += f"{line.replace('>', '').strip()} "
         return ParentNode("blockquote", text_to_children(joined.rstrip()))
 
 

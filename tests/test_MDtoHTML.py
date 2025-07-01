@@ -114,5 +114,21 @@ class TestMDtoHTML(unittest.TestCase):
             html,
             "<div><h1>Main Title</h1><p>This is a paragraph with <b>bold</b> and <i>italic</i> text.</p><blockquote>A quote with <code>code</code></blockquote><ul><li>List item 1</li><li>List item 2</li></ul><pre><code>Code block\nwith multiple\nlines\n</code></pre></div>"
         )
+
+    def test_quote_with_attribution(self):
+        md = """
+    Here's the deal, **I like Tolkien**.
+
+    > "I am in fact a Hobbit in all but size."
+    >
+    > -- J.R.R. Tolkien
+    """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            """<div><p>Here's the deal, <b>I like Tolkien</b>.</p><blockquote>"I am in fact a Hobbit in all but size." -- J.R.R. Tolkien</blockquote></div>"""
+        )
+
 if __name__ == "__main__":
     unittest.main()
